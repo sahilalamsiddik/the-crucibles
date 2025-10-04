@@ -1,2 +1,0 @@
-# the-crucibles
-Nasa Hacakathon
