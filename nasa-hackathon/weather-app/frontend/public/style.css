@@ -189,7 +189,7 @@ input:checked + .slider:before { transform: translateX(26px); }
     align-items: center;
     justify-content: center;
     gap: 1.0rem;
-    padding: 5rem;
+    padding: 2rem;
     background-color: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -221,6 +221,7 @@ input:checked + .slider:before { transform: translateX(26px); }
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: auto auto;
     gap: 1.5rem;
+    margin-bottom: 2rem; /* Add space before the favourites bar */
 }
 
 .card {
@@ -311,7 +312,7 @@ input:checked + .slider:before { transform: translateX(26px); }
 /* --- Weather Planner --- */
 /* ======================== */
 .weather-planner {
-    margin-top: 1.5rem;
+    margin-bottom: 2rem; /* Add space before the main content grid */
 }
 
 .weather-planner h3 {
