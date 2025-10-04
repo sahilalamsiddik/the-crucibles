@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Weather Forseen</title>
+    <link rel="stylesheet" href="style.css"> <!-- Re-use main styles -->
+    <link rel="stylesheet" href="about.css"> <!-- Add specific about styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+
+    <div class="about-container">
+        <div class="about-box">
+            <div class="logo-container">
+                <i data-feather="cloud-sun" class="logo-icon"></i>
+                <span class="logo-text">Weather Forseen</span>
+            </div>
+            <h2>About & Support</h2>
+            
+            <div class="about-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><strong>Developer:</strong> Alex Ray</li>
+                    <li><strong>Mobile:</strong> +91 98765 43210</li>
+                    <li><strong>Email:</strong> support@weatherforseen.dev</li>
+                    <li><strong>Location:</strong> Bengaluru, India</li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h3>Credits</h3>
+                <ul>
+                    <li>NASA (For space data and inspiration)</li>
+                    <li>Jain (Deemed-to-be University)</li>
+                    <li>Feather Icons</li>
+                    <li>Google Fonts</li>
+                </ul>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">&larr; Back to Weather</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      feather.replace();
+      // Apply theme from localStorage if it exists
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      if (savedTheme === 'dark') {
+          document.body.dataset.theme = 'dark';
+      } else {
+          document.body.dataset.theme = 'light';
+      }
+    </script>
+</body>
+</html>

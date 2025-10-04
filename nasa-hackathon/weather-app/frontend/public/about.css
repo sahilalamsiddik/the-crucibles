@@ -1,0 +1,76 @@
+/* We re-use the body, theme, and background styles from style.css */
+
+.about-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.about-box {
+    width: 100%;
+    max-width: 500px;
+    padding: 2.5rem;
+    background-color: var(--light-card-bg);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--light-card-border);
+    border-radius: 20px;
+    text-align: center;
+}
+
+body[data-theme="dark"] .about-box {
+    background-color: var(--dark-card-bg);
+    border-color: var(--dark-card-border);
+}
+
+.about-box .logo-container {
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.about-box h2 {
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.about-section {
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.about-section h3 {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 0.5rem;
+}
+
+body[data-theme="dark"] .about-section h3 {
+    border-bottom-color: rgba(255,255,255,0.1);
+}
+
+.about-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.about-section li {
+    margin-bottom: 0.5rem;
+    color: var(--light-text-secondary);
+}
+
+body[data-theme="dark"] .about-section li {
+    color: var(--dark-text-secondary);
+}
+
+/* Re-using back-link style from login.css */
+.back-link {
+    margin-top: 1rem;
+}
+.back-link a {
+    color: var(--light-text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+}

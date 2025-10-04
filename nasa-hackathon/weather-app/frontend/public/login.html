@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Weather Forseen</title>
+    <link rel="stylesheet" href="style.css"> <!-- Re-use main styles for background and theme -->
+    <link rel="stylesheet" href="login.css"> <!-- Add specific login styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js" type="module"></script>
+</head>
+<body>
+
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo-container">
+                <i data-feather="cloud-sun" class="logo-icon"></i>
+                <span class="logo-text">Weather Forseen</span>
+            </div>
+            <!-- Sign In Form -->
+            <div class="form-container" id="signin-container">
+                <h2>Sign In</h2>
+                <form class="login-form">
+                    <div class="input-group">
+                        <label for="email">Gmail</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" required>
+                            <i data-feather="eye" id="toggle-password"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="signin-btn">Sign In</button>
+                    <div class="separator">OR</div>
+                    <button type="button" id="googleSignIn" class="google-signin-btn">
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: block;">
+                            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                            <path fill="none" d="M0 0h48v48H0z"></path>
+                        </svg>
+                        <span>Sign in with Google</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Sign Up Form (hidden by default) -->
+            <div class="form-container hidden" id="signup-container">
+                <h2>Create Account</h2>
+                <form class="signup-form">
+                    <div class="input-group">
+                        <label for="signup-name">Name</label>
+                        <input type="text" id="signup-name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-dob">Date of Birth</label>
+                        <input type="date" id="signup-dob" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-email">Gmail</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-password">Set Password</label>
+                        <input type="password" id="signup-password" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" required>
+                    </div>
+                    <button type="submit" class="signin-btn">Sign Up</button>
+                </form>
+            </div>
+
+            <div class="toggle-link">
+                <p id="toggle-to-signup">Don't have an account? <a href="#">Sign Up</a></p>
+                <p id="toggle-to-signin" class="hidden">Already have an account? <a href="#">Sign In</a></p>
+            </div>
+            <div class="back-link">
+                <a href="index.html">&larr; Back to Weather</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      feather.replace();
+    </script>
+    <script src="login.js" type="module"></script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+        // IMPORTANT: Replace with your actual Firebase project configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        document.getElementById('googleSignIn').addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                
+                console.log("Successfully signed in with Google:", user.displayName);
+                // On successful login, redirect to the main weather app
+                window.location.href = 'index.html';
+
+            } catch (error) {
+                // Handle Errors here.
+                console.error("Google Sign-In Error:", error.message);
+                alert("Could not sign in with Google. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" required>
+                        <i data-feather="eye" id="toggle-password"></i>
+                    </div>
+                </div>
+                <button type="submit" class="signin-btn">Sign In</button>
+            </form>
+            <div class="back-link">
+                <a href="index.html">&larr; Back to Weather</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      feather.replace();
+    </script>
+    <script src="login.js"></script>
+</body>
+</html>

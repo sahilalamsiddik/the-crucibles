@@ -29,13 +29,17 @@ body {
     font-family: 'Poppins', sans-serif;
     background: var(--light-bg);
     color: var(--light-text-primary);
+    min-height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal scrollbar when menu is off-screen */
+    transition: background 0.5s ease, color 0.5s ease;
+}
+
+/* These styles should only apply to the main weather page, not the login page */
+.weather-app-body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
     padding: 2rem;
-    overflow-x: hidden; /* Prevent horizontal scrollbar when menu is off-screen */
-    transition: background 0.5s ease, color 0.5s ease;
 }
 
 /* --- Animated Starry Night Background for Dark Mode --- */
@@ -101,7 +105,7 @@ body[data-theme="light"] .twinkling {
 .main-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start; /* Align items to the top to prevent vertical shift */
     gap: 2rem; /* Add space between header items */
     margin-bottom: 2rem;
 }
@@ -110,10 +114,14 @@ body[data-theme="light"] .twinkling {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: var(--light-header-text);
+    /* The color will now be handled by the children elements for better theme adaptation */
     flex-shrink: 0; /* Prevent the logo from shrinking */
 }
-body[data-theme="dark"] .logo-container, body[data-theme="dark"] .menu-icon {
+
+.logo-container .logo-icon {
+    color: var(--light-header-text);
+}
+body[data-theme="dark"] .logo-container .logo-icon {
     color: var(--dark-header-text);
 }
 
@@ -124,17 +132,31 @@ body[data-theme="dark"] .logo-container, body[data-theme="dark"] .menu-icon {
 }
 
 .logo-text {
-    font-size: 1.5rem;
+    font-size: 1.6rem; /* Slightly larger for more impact */
     font-weight: 600;
+    /* Use a dark color in light mode and a light color in dark mode */
+    color: var(--light-text-primary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Adds depth and contrast */
+}
+
+body[data-theme="dark"] .logo-text {
+    color: var(--dark-header-text);
+}
+
+.ai-chat-area {
+    flex-grow: 1;
+    max-width: 750px; /* Increased width by 50px */
+    display: flex;
+    flex-direction: column;
 }
 
 .header-search-bar {
     position: relative;
     flex-grow: 1;
-    max-width: 700px;
+    max-width: 750px; /* Increased width by 50px */
 }
-
-.header-search-bar .feather {
+/* This rule should only apply to the zap icon, not the send icon */
+.header-search-bar > .feather:first-of-type {
     position: absolute;
     left: 1rem;
     top: 50%;
@@ -147,7 +169,7 @@ body[data-theme="dark"] .logo-container, body[data-theme="dark"] .menu-icon {
 
 .header-search-bar input {
     width: 100%;
-    padding: 0.75rem 1.5rem 0.75rem 3rem; /* Space for icon */
+    padding: 0.75rem 3rem 0.75rem 3rem; /* Space for icons on both sides */
     border-radius: 25px;
     border: none;
     background-color: rgba(255, 255, 255, 0.7);
@@ -156,6 +178,22 @@ body[data-theme="dark"] .logo-container, body[data-theme="dark"] .menu-icon {
     backdrop-filter: blur(5px);
     transition: background-color 0.3s;
     color: var(--light-text-primary);
+}
+
+.header-search-bar .send-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--light-accent);
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    z-index: 2;
+}
+
+body[data-theme="dark"] .header-search-bar .send-icon {
+    color: var(--dark-accent);
 }
 
 .header-search-bar input::placeholder {
@@ -167,8 +205,8 @@ body[data-theme="dark"] .logo-container, body[data-theme="dark"] .menu-icon {
     background-color: rgba(255, 255, 255, 0.9);
 }
 
-body[data-theme="dark"] .header-search-bar .feather {
-    color: var(--dark-text-secondary);
+body[data-theme="dark"] .header-search-bar > .feather:first-of-type {
+    color: var(--dark-text-secondary); /* Only color the zap icon */
 }
 
 body[data-theme="dark"] .header-search-bar input {
@@ -206,17 +244,22 @@ body[data-theme="dark"] .main-weather-card {
   left: 4px; bottom: 4px; background-color: white;
   transition: .4s; border-radius: 50%;
 }
+
+body[data-theme="dark"] .slider {
+    background-color: rgba(0,0,0,0.3);
+}
+
 input:checked + .slider { background-color: var(--light-accent); }
 input:checked + .slider:before { transform: translateX(26px); }
 .switch .label-c, .switch .label-f {
     position: absolute; top: 50%; transform: translateY(-50%);
-    color: white; font-weight: bold;
+    color: var(--light-text-secondary); font-weight: bold;
 }
 
 /* Theme Toggle Labels */
 .switch .label-light, .switch .label-dark {
     position: absolute; top: 50%; transform: translateY(-50%);
-    color: white;
+    color: var(--light-text-secondary);
 }
 .switch .label-light .feather, .switch .label-dark .feather {
     width: 18px; height: 18px;
@@ -225,6 +268,12 @@ input:checked + .slider:before { transform: translateX(26px); }
 .switch .label-dark { right: 8px; }
 
 body[data-theme="dark"] input:checked + .slider { background-color: var(--dark-accent); }
+body[data-theme="dark"] .switch .label-c,
+body[data-theme="dark"] .switch .label-f,
+body[data-theme="dark"] .switch .label-light,
+body[data-theme="dark"] .switch .label-dark {
+    color: var(--dark-text-secondary);
+}
 
 
 .switch .label-c { left: 8px; }
@@ -274,7 +323,7 @@ body[data-theme="dark"] .favourite-item:hover {
     position: absolute;
     bottom: 100%; /* Position above the button */
     left: 0;
-    width: 100%;
+    width: 150px; /* Match the width of the favourite-item */
     max-height: 200px;
     overflow-y: auto;
     background-color: var(--light-card-bg);
@@ -283,6 +332,7 @@ body[data-theme="dark"] .favourite-item:hover {
     border-radius: 10px;
     z-index: 10;
     padding: 0.5rem 0;
+    overflow-clip-margin: 20px; /* Allows the element to paint outside its container */
     display: none; /* Hidden by default */
 }
 
@@ -317,9 +367,8 @@ body[data-theme="dark"] .add-favourite-dropdown {
 .content-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto auto;
+    grid-template-rows: auto auto auto;
     gap: 1.5rem;
-    margin-bottom: 2rem; /* Add space before the favourites bar */
 }
 body[data-theme="dark"] .card {
     background-color: var(--dark-card-bg);
@@ -336,7 +385,7 @@ body[data-theme="dark"] .card {
 }
 
 .main-weather-card {
-    grid-row: 1 / 3; /* This card spans two rows */
+    grid-row: 2 / 4; /* This card spans two rows, starting from the second row */
     text-align: center;
 }
 .location-info h1 { font-size: 2.5rem; font-weight: 600; }
@@ -464,7 +513,7 @@ body[data-theme="dark"] .detail-item p {
 /* --- Weather Planner --- */
 /* ======================== */
 .weather-planner {
-    margin-bottom: 2rem; /* Add space before the main content grid */
+    grid-column: 1 / -1; /* Make this card span all columns */
 }
 
 .weather-planner h3 {
@@ -490,7 +539,8 @@ body[data-theme="dark"] .detail-item p {
     flex-grow: 1;
 }
 
-.planner-search .feather {
+/* Target only the first icon (map-pin) to be on the left */
+.planner-search > .feather:first-of-type {
     position: absolute;
     left: 0.75rem;
     top: 50%; transform: translateY(-50%);
@@ -510,13 +560,28 @@ body[data-theme="dark"] .detail-item p {
 }
 
 .planner-search input {
-    padding-left: 2.5rem; /* Space for icon */
+    padding-left: 2.5rem; /* Space for left icon */
 }
 
 .planner-search input:focus,
 .planner-date input:focus {
     outline: none; border-color: var(--light-accent);
 }
+
+.planner-search .planner-send-icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--light-accent);
+    cursor: pointer;
+    width: 20px;
+}
+
+body[data-theme="dark"] .planner-search .planner-send-icon {
+    color: var(--dark-accent);
+}
+
 
 body[data-theme="dark"] .planner-search .feather {
     color: var(--dark-text-secondary);
@@ -618,4 +683,74 @@ body[data-theme="dark"] .close-menu-icon, body[data-theme="dark"] .setting-item 
 }
 body[data-theme="dark"] .setting-item.menu-link:hover {
     color: var(--dark-accent);
+}
+
+/* ======================== */
+/* --- Chat History --- */
+/* ======================== */
+.chat-history-container {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    /* Use padding and a calculated width to make the box wider */
+    width: calc(100% + 400px); /* Extend by another 100px on each side (total 200px each side) */
+    transform: translateX(-200px); /* Shift left by half the extra width to re-center */
+    padding: 1rem 2rem; /* Increase horizontal padding */
+    /* Make the background slightly more opaque for better readability */
+    background-color: rgba(0,0,0,0.08);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* --- Custom Scrollbar for Chat History --- */
+.chat-history-container::-webkit-scrollbar {
+    width: 8px;
+}
+.chat-history-container::-webkit-scrollbar-track {
+    background: transparent; /* Make the track transparent */
+}
+.chat-history-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.25); /* 50% opacity black */
+    border-radius: 10px;
+}
+
+.chat-history-container.hidden {
+    display: none;
+}
+
+.chat-message {
+    padding: 0.75rem 1rem;
+    border-radius: 15px;
+    max-width: 70%;
+    line-height: 1.4;
+    animation: pop-in 0.3s ease;
+}
+
+.user-message {
+    background-color: var(--light-accent);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 3px;
+}
+
+.ai-message {
+    background-color: var(--light-card-bg);
+    align-self: flex-start;
+    border-bottom-left-radius: 3px;
+}
+
+body[data-theme="dark"] .user-message {
+    background-color: var(--dark-accent);
+    color: #111;
+}
+
+body[data-theme="dark"] .ai-message {
+    background-color: var(--dark-card-bg);
+}
+
+@keyframes pop-in {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }

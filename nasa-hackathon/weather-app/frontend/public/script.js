@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Element Selectors ---
     const headerSearchInput = document.querySelector('.header-search-bar input');
+    const headerSendIcon = document.querySelector('.header-search-bar .send-icon');
+    const plannerSearchInput = document.querySelector('.planner-search input');
+    const plannerSendIcon = document.querySelector('.planner-search .planner-send-icon');
     let favouriteItems = document.querySelectorAll('.favourite-item:not(.add-favourite)');
     const cityNameEl = document.querySelector('.location-info h1');
     const dateEl = document.querySelector('.location-info p');
@@ -32,6 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const chartBarContainer = document.querySelector('.chart-bar-container');
     const favouritesBar = document.querySelector('.favourites-bar');
     const addFavouriteBtn = document.getElementById('add-favourite-btn');
+    
+    // Chat History Elements
+    const chatHistoryContainer = document.querySelector('.chat-history-container');
 
     // Detail selectors
     const windSpeedEl = document.getElementById('wind-speed');
@@ -150,11 +156,52 @@ document.addEventListener('DOMContentLoaded', () => {
         feather.replace(); // Re-render all icons
     }
 
+    // --- Chat History Function ---
+    function addMessageToHistory(text, type) {
+        if (chatHistoryContainer.classList.contains('hidden')) {
+            chatHistoryContainer.classList.remove('hidden');
+        }
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${type}-message`;
+        messageDiv.textContent = text;
+        chatHistoryContainer.appendChild(messageDiv);
+        // Scroll to the latest message
+        chatHistoryContainer.scrollTop = chatHistoryContainer.scrollHeight;
+    }
+
+    // --- Search/Fetch Handler ---
+    const handleSearch = async (query) => {
+        if (!query) return; // Do nothing if input is empty
+
+        if (headerSearchInput.value) headerSearchInput.value = ''; // Clear input if it was used
+        addMessageToHistory(query, 'user');
+
+        try {
+            // Send the query to your backend API
+            const response = await fetch(`http://127.0.0.1:8000/api/weather/${query}`);
+
+            if (response.ok) {
+                const cityData = await response.json();
+                // For chat history, we can create a summary message
+                const aiReply = `Here is the weather for ${cityData.name}. The current temperature is ${cityData.tempC}°C.`;
+                addMessageToHistory(aiReply, 'ai');
+                updateWeatherDisplay(cityData);
+            } else {
+                const errorData = await response.json();
+                const errorMessage = errorData.detail || "Could not find weather data for that city.";
+                addMessageToHistory(errorMessage, 'ai');
+            }
+        } catch (error) {
+            console.error("Error fetching weather data:", error);
+            addMessageToHistory("There was a problem connecting to the weather service. Please try again later.", 'ai');
+        }
+    };
+
     // --- Favourites Click Functionality ---
     function addFavouriteClickListener(item) {
-        item.addEventListener('click', () => {
+        item.addEventListener('click', async () => {
             const cityName = item.querySelector('p').textContent.toLowerCase();
-            updateWeatherDisplay(mockWeatherData[cityName]);
+            await handleSearch(cityName); // Use the backend search function
         });
     }
     favouriteItems.forEach(addFavouriteClickListener);
@@ -170,14 +217,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const existingFavourites = Array.from(favouritesBar.querySelectorAll('.favourite-item:not(.add-favourite)'))
                                             .map(item => item.querySelector('p').textContent.toLowerCase());
             
-            const availableCities = Object.keys(mockWeatherData)
+            const availableCities = Object.keys(mockWeatherData) // This is the source of the bug. Let's fix it.
                                           .filter(cityKey => !existingFavourites.includes(cityKey));
 
             availableCities.forEach(cityKey => {
                 const cityData = mockWeatherData[cityKey];
                 const option = document.createElement('a');
                 option.textContent = cityData.name;
-                option.dataset.cityKey = cityKey;
+                option.dataset.cityKey = cityKey; // The key is the lowercase name
                 option.addEventListener('click', (e) => {
                     e.stopPropagation(); // Prevent button click from firing
                     addCityToFavourites(cityKey);
@@ -188,12 +235,12 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const addCityToFavourites = (cityKey) => {
-            const cityData = mockWeatherData[cityKey];
+            const cityData = mockWeatherData[cityKey]; // This is also part of the bug.
             const newFavItem = document.createElement('div');
             newFavItem.className = 'favourite-item';
             newFavItem.innerHTML = `
                 <p>${cityData.name}</p>
-                <i data-feather="${cityData.icon}" class="weather-icon"></i>
+                <i data-feather="${cityData.icon || 'cloud'}" class="weather-icon"></i>
                 <span class="temp-value" data-temp-c="${cityData.tempC}">${cityData.tempC}°C</span>
             `;
             favouritesBar.insertBefore(newFavItem, addFavouriteBtn);
@@ -219,16 +266,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Header Search Bar Functionality ---
     if (headerSearchInput) {
         headerSearchInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter' && headerSearchInput.value) {
-                const query = headerSearchInput.value.toLowerCase().trim();
-                if (mockWeatherData[query]) {
-                    const cityData = mockWeatherData[query];
-                    updateWeatherDisplay(cityData);
-                } else {
-                    alert("I can currently fetch weather for the listed cities. Please try one of those (e.g., 'pune', 'jaipur').");
-                }
-                headerSearchInput.value = ''; // Clear search bar after handling the query
+            if (event.key === 'Enter') {
+                handleSearch(headerSearchInput.value);
             }
         });
+
+        headerSendIcon.addEventListener('click', () => handleSearch(headerSearchInput.value));
+    }
+
+    // --- Planner Search Bar Functionality ---
+    if (plannerSearchInput && plannerSendIcon) {
+        const handlePlannerSearch = async () => {
+            const query = plannerSearchInput.value.trim();
+            const date = document.querySelector('.planner-date input').value;
+            if (!query) return;
+
+            // For now, we will just show an alert.
+            // The backend team can use this to build their API.
+            alert(`Query sent to backend:\nPlace: ${query}\nDate: ${date || 'Not specified'}`);
+
+            // Example of how it *could* work with a backend:
+            /*
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/planner?place=${query}&date=${date}`);
+                if(response.ok) {
+                    const plannerData = await response.json();
+                    // Code to display plannerData in .planner-results-placeholder
+                }
+            } catch (error) {
+                console.error("Error fetching planner data:", error);
+            }
+            */
+            plannerSearchInput.value = '';
+        };
+
+        plannerSearchInput.addEventListener('keypress', (e) => e.key === 'Enter' && handlePlannerSearch());
+        plannerSendIcon.addEventListener('click', handlePlannerSearch);
     }
 });

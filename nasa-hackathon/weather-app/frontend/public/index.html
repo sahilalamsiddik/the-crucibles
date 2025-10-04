@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/feather-icons"></script>
 </head>
-<body>
+<body class="weather-app-body">
 
     <div class="stars"></div>
     <div class="twinkling"></div>
@@ -21,34 +21,41 @@
                 <i data-feather="cloud-sun" class="logo-icon"></i>
                 <span class="logo-text">Weather Forseen</span>
             </div>
-            <div class="header-search-bar">
-                <i data-feather="zap"></i>
-                <input type="text" placeholder="Ask AI for your weather queries....">
+            <div class="ai-chat-area">
+                <div class="chat-history-container hidden">
+                    <!-- Chat messages will be appended here by JavaScript -->
+                </div>
+                <div class="header-search-bar">
+                    <i data-feather="zap"></i>
+                    <input type="text" placeholder="Ask AI for your weather queries....">
+                    <i data-feather="send" class="send-icon"></i>
+                </div>
             </div>
             <div class="header-controls">
                 <i data-feather="menu" class="menu-icon"></i>
             </div>
         </header>
 
-        <section class="card weather-planner">
-            <h3>Weather Planner</h3>
-            <div class="planner-content">
-                <div class="planner-controls">
-                    <div class="planner-search">
-                        <i data-feather="map-pin"></i>
-                        <input type="text" placeholder="Search any place in the world...">
-                    </div>
-                    <div class="planner-date">
-                        <input type="datetime-local" min="1960-01-01T00:00" max="2026-12-31T23:59">
-                    </div>
-                </div>
-                <div class="planner-results-placeholder">
-                    <!-- Future planner results will be displayed here -->
-                </div>
-            </div>
-        </section>
-
         <main class="content-grid">
+            <section class="card weather-planner">
+                <h3>Weather Planner</h3>
+                <div class="planner-content">
+                    <div class="planner-controls">
+                        <div class="planner-search">
+                            <i data-feather="map-pin"></i>
+                            <input type="text" placeholder="Search any place in the world...">
+                            <i data-feather="send" class="planner-send-icon"></i>
+                        </div>
+                        <div class="planner-date">
+                            <input type="datetime-local" min="1960-01-01T00:00" max="2026-12-31T23:59">
+                        </div>
+                    </div>
+                    <div class="planner-results-placeholder">
+                        <!-- Future planner results will be displayed here -->
+                    </div>
+                </div>
+            </section>
+            
             <section class="card main-weather-card">
                 <div class="location-info">
                     <h1>Bengaluru</h1>
@@ -215,16 +222,16 @@
                 <p>Add Events</p>
                 <i data-feather="chevron-right"></i>
             </div>
-            <div class="setting-item menu-link">
+            <a href="login.html" class="setting-item menu-link" style="text-decoration: none; color: inherit;">
                 <i data-feather="log-in"></i>
                 <p>Login</p>
                 <i data-feather="chevron-right"></i>
-            </div>
-            <div class="setting-item menu-link">
+            </a>
+            <a href="about.html" class="setting-item menu-link" style="text-decoration: none; color: inherit;">
                 <i data-feather="info"></i>
                 <p>About</p>
                 <i data-feather="chevron-right"></i>
-            </div>
+            </a>
         </div>
     </aside>
 

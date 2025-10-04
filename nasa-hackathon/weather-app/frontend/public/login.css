@@ -1,0 +1,177 @@
+/* We re-use the body, theme, and background styles from style.css */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 2.5rem;
+    background-color: var(--light-card-bg);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--light-card-border);
+    border-radius: 20px;
+    text-align: center;
+}
+
+body[data-theme="dark"] .login-box {
+    background-color: var(--dark-card-bg);
+    border-color: var(--dark-card-border);
+}
+
+.login-box .logo-container {
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.login-box h2 {
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.input-group {
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background-color: rgba(255, 255, 255, 0.7);
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+}
+
+body[data-theme="dark"] .input-group input {
+    background-color: rgba(0,0,0,0.2);
+    border-color: rgba(255,255,255,0.1);
+    color: var(--dark-text-primary);
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 3rem; /* Space for eye icon */
+}
+
+.password-wrapper #toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--light-text-secondary);
+}
+
+.signin-btn {
+    padding: 0.8rem;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--light-accent);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 1rem;
+}
+
+.signin-btn:hover {
+    background-color: #3498db;
+}
+
+body[data-theme="dark"] .signin-btn {
+    background-color: var(--dark-accent);
+    color: #111;
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--light-text-secondary);
+    margin: 1.5rem 0;
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.separator:not(:empty)::before {
+    margin-right: .5em;
+}
+
+.separator:not(:empty)::after {
+    margin-left: .5em;
+}
+
+.google-signin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.6rem;
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.google-signin-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.toggle-link {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.toggle-link a {
+    color: var(--light-accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+body[data-theme="dark"] .toggle-link a {
+    color: var(--dark-accent);
+}
+
+.back-link {
+    margin-top: 2rem;
+}
+
+.back-link a {
+    color: var(--light-text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.hidden {
+    display: none;
+}
