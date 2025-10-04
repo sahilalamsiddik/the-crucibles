@@ -30,4 +30,27 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    // Temperature Unit Toggle
+    const tempUnitToggle = document.getElementById('temp-unit-toggle');
+    if (tempUnitToggle) {
+        tempUnitToggle.addEventListener('change', () => {
+            const isFahrenheit = tempUnitToggle.checked;
+            const tempElements = document.querySelectorAll('.temp-value');
+
+            tempElements.forEach(el => {
+                const tempC = parseFloat(el.dataset.tempC);
+                if (!isNaN(tempC)) {
+                    if (isFahrenheit) {
+                        // Convert to Fahrenheit
+                        const tempF = Math.round((tempC * 9/5) + 32);
+                        el.textContent = `${tempF}°F`;
+                    } else {
+                        // Convert back to Celsius
+                        el.textContent = `${tempC}°C`;
+                    }
+                }
+            });
+        });
+    }
 });

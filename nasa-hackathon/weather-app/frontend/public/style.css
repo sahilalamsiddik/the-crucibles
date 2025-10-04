@@ -183,13 +183,13 @@ input:checked + .slider:before { transform: translateX(26px); }
 }
 
 .favourite-item {
-    flex: 0 0 120px; /* Prevent shrinking, set a base width */
+    flex: 0 0 150px; /* Prevent shrinking, set a base width */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 1rem;
+    gap: 1.0rem;
+    padding: 5rem;
     background-color: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -245,7 +245,36 @@ input:checked + .slider:before { transform: translateX(26px); }
 .temp-display span { font-size: 6rem; font-weight: 600; line-height: 1; }
 .hourly-precipitation h4 { margin-bottom: 0.5rem; color: #555; }
 .chart-placeholder {
-    height: 100px; background-color: rgba(0,0,0,0.1); border-radius: 10px;
+    height: 120px;
+    padding: 1rem 0;
+}
+
+.chart-bar-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 100%;
+    width: 100%;
+}
+
+.chart-bar {
+    width: 8%;
+    background-color: rgba(41, 128, 185, 0.5);
+    border-radius: 5px 5px 0 0;
+    position: relative;
+    transition: background-color 0.3s;
+}
+
+.chart-bar.current {
+    background-color: #f5dd4b;
+}
+
+.bar-label {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
 }
 
 .card h3 {
