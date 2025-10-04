@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forseen</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+
+    <div class="weather-container">
+        <header class="main-header">
+            <div class="logo-container">
+                <i data-feather="cloud-sun" class="logo-icon"></i>
+                <span class="logo-text">Weather Forseen</span>
+            </div>
+            <div class="search-bar">
+                <i data-feather="mic" class="search-mic-icon"></i>
+                <input type="text" placeholder="Search for location...">
+                <div class="region-selector">
+                    <span class="selected-region">IN</span>
+                    <i data-feather="chevron-down" class="region-arrow"></i>
+                    <div class="region-dropdown">
+                        <a href="#" data-value="JON">JON</a>
+                        <a href="#" data-value="AMR">AMR</a>
+                        <a href="#" data-value="AUS">AUS</a>
+                        <a href="#" data-value="AFR">AFR</a>
+                    </div>
+                </div>
+            </div>
+            <div class="header-controls">
+                <i data-feather="menu" class="menu-icon"></i>
+            </div>
+        </header>
+
+        <section class="favourites-bar">
+            <div class="favourite-item">
+                <p>Kolkata</p>
+                <i data-feather="cloud-rain" class="weather-icon"></i>
+                <span>28°</span>
+            </div>
+            <div class="favourite-item">
+                <p>Delhi</p>
+                <i data-feather="sun" class="weather-icon"></i>
+                <span>34°</span>
+            </div>
+            <div class="favourite-item">
+                <p>Mumbai</p>
+                <i data-feather="cloud" class="weather-icon"></i>
+                <span>30°</span>
+            </div>
+            <div class="favourite-item">
+                <p>Chennai</p>
+                <i data-feather="cloud-lightning" class="weather-icon"></i>
+                <span>31°</span>
+            </div>
+            <div class="favourite-item add-favourite">
+                <i data-feather="plus-circle"></i>
+            </div>
+        </section>
+
+        <main class="content-grid">
+            <section class="card main-weather-card">
+                <div class="location-info">
+                    <h1>Bengaluru</h1>
+                    <p>Saturday, 4 October 2025</p>
+                </div>
+                <div class="temp-display">
+                    <i data-feather="sun" class="main-weather-icon"></i>
+                    <span>30°</span>
+                </div>
+                <div class="hourly-precipitation">
+                    <h4>Hourly Precipitation</h4>
+                    <div class="chart-placeholder"></div>
+                </div>
+            </section>
+
+            <section class="card current-conditions">
+                <h3>Current Conditions</h3>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <i data-feather="wind"></i>
+                        <div>
+                            <p>Wind Speed</p>
+                            <span>120 km/h NW</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i data-feather="droplet"></i>
+                        <div>
+                            <p>Humidity</p>
+                            <span>78%</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i data-feather="umbrella"></i>
+                        <div>
+                            <p>Rain Prediction</p>
+                            <span>10%</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i data-feather="thermometer"></i>
+                        <div>
+                            <p>Heat Index</p>
+                            <span>34°c</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i data-feather="sun"></i>
+                        <div>
+                            <p>UV Index</p>
+                            <span>High</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i data-feather="cloud"></i>
+                        <div>
+                            <p>Cloud Cover</p>
+                            <span>25%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card atmospheric-details">
+                <h3>Atmospheric Details</h3>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <i data-feather="sunrise"></i>
+                        <div>
+                            <p>Solar Radiation</p>
+                            <span>850 W/m²</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i data-feather="git-merge"></i>
+                        <div>
+                            <p>Surface Temp</p>
+                            <span>32°c</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i data-feather="layers"></i>
+                        <div>
+                            <p>Surface Atmosphere</p>
+                            <span>1012 hPa</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i data-feather="shield"></i>
+                        <div>
+                            <p>Oxygen Levels</p>
+                            <span>20.9%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <section class="card weather-planner">
+            <h3>Weather Planner</h3>
+            <div class="planner-content">
+                <!-- Planner content will be added here later -->
+                <p style="text-align: center; color: #555; padding: 2rem 0;">Future content will appear here...</p>
+            </div>
+        </main>
+    </div>
+
+    <aside class="side-menu">
+        <div class="side-menu-header">
+            <h3>Settings</h3>
+            <i data-feather="x" class="close-menu-icon"></i>
+        </div>
+        <div class="side-menu-content">
+            <div class="setting-item">
+                <p>Temperature Unit</p>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                    <span class="label-c">C</span>
+                    <span class="label-f">F</span>
+                </label>
+            </div>
+            <div class="setting-item menu-link">
+                <i data-feather="calendar"></i>
+                <p>Add Events</p>
+                <i data-feather="chevron-right"></i>
+            </div>
+            <div class="setting-item menu-link">
+                <i data-feather="log-in"></i>
+                <p>Login</p>
+                <i data-feather="chevron-right"></i>
+            </div>
+            <div class="setting-item menu-link">
+                <i data-feather="info"></i>
+                <p>About</p>
+                <i data-feather="chevron-right"></i>
+            </div>
+        </div>
+    </aside>
+
+    <script>
+      feather.replace(); // This script activates the icons
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
