@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forseen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="thecrucibles.svg">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        /* CSS STYLES EMBEDDED HERE */
+
+        /* Basic Resets & Global Styles */
+        body {
+            --bg-gradient: linear-gradient(135deg, #FFECB3 0%, #ADD8E6 100%);
+            --text-primary: #333;
+            --text-secondary: #555;
+            --navbar-bg: rgba(255, 255, 255, 0.7);
+            --section-bg: rgba(255, 255, 255, 0.5);
+            --card-bg: #ffffff;
+            --card-shadow: rgba(0, 0, 0, 0.05);
+            --heading-color: #2c3e50;
+            --accent-color: #5a7af1;
+            --accent-hover: #4a68d0;
+            --accent-text: white;
+
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-primary);
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        body.dark-mode {
+            --bg-gradient: linear-gradient(135deg, #2c3e50 0%, #1d2b38 100%);
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --navbar-bg: rgba(29, 43, 56, 0.7);
+            --section-bg: rgba(44, 62, 80, 0.5);
+            --card-bg: #1d2b38;
+            --card-shadow: rgba(0, 0, 0, 0.2);
+            --heading-color: #ecf0f1;
+            --accent-color: #3498db;
+            --accent-hover: #2980b9;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: var(--navbar-bg);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-left .logo {
+            font-size: 32px;
+            color: var(--accent-color);
+            margin-right: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-left .app-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .navbar-right ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-right li {
+            margin-left: 30px;
+        }
+
+        .navbar-right li a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar-right li.active a,
+        .navbar-right li a:hover {
+            background-color: var(--accent-color);
+            color: var(--accent-text);
+            box-shadow: 0 4px 10px rgba(90, 122, 241, 0.3);
+        }
+
+        .navbar-right .menu-icon {
+            font-size: 1.2em;
+            padding: 8px 12px;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
+            color: var(--text-secondary);
+        }
+
+        /* Hide some nav items on smaller screens to prevent clutter */
+        .nav-item-desktop {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Main Content Styling */
+        main#app-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .content-section {
+            display: none; /* Hide all sections by default */
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .content-section.active {
+            display: flex; /* Show active section */
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            opacity: 1;
+            visibility: visible;
+            gap: 20px; /* Add gap for stacked items on mobile */
+        }
+
+        /* Hero Section (from Image "3") Specific Styles */
+        .hero-text-container {
+            flex: 1.2;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .hero-text-container h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            color: var(--heading-color);
+        }
+
+        .hero-text-container p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: var(--accent-text);
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .hero-image-gallery {
+            flex: 1;
+            max-width: 900px;
+            background-color: var(--section-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            margin-left: 40px;
+        }
+
+        .gallery-inner {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .gallery-inner img {
+            width: 200px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            pointer-events: none; /* Disables mouse events like click */
+            user-select: none; /* Prevents the user from selecting the image */
+            -webkit-user-drag: none; /* Prevents dragging in WebKit browsers like Chrome and Safari */
+        }
+
+        /* Why Choose Section (from Image "2") Specific Styles */
+        #why-choose-section {
+            flex-direction: column;
+            text-align: center;
+            background-color: var(--section-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+        }
+
+        .why-choose-header h2 {
+            font-size: 2.5em;
+            color: var(--heading-color);
+            margin-bottom: 10px;
+        }
+
+        .why-choose-header p {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            margin-bottom: 50px;
+        }
+
+        .feature-cards {
+            display: flex;
+            justify-content: space-around;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            max-width: 300px;
+            flex: 1;
+            min-width: 250px;
+            box-shadow: 0 5px 20px var(--card-shadow);
+        }
+
+        .card img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 1.5em;
+            color: var(--heading-color);
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Side Menu (from menu icon) */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -300px; /* Start off-screen */
+            width: 280px;
+            height: 100%;
+            background-color: var(--navbar-bg);
+            backdrop-filter: blur(15px);
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 1100; /* Higher than navbar */
+            transition: right 0.4s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-menu.active {
+            right: 0; /* Slide in */
+        }
+
+        .side-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .side-menu-header h3 {
+            margin: 0;
+            font-size: 1.3em;
+            color: var(--text-primary);
+        }
+
+        .side-menu-header .close-menu-btn {
+            cursor: pointer;
+            font-size: 1.5em;
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+        .side-menu-header .close-menu-btn:hover {
+            color: var(--heading-color);
+        }
+
+        .side-menu-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .side-menu-content a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 1.1em;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .side-menu-content a:hover {
+            background-color: var(--accent-color);
+            color: var(--accent-text);
+        }
+
+        /* Predict Weather Section */
+        #predict-weather-section {
+            flex-direction: column;
+            text-align: center;
+            background-color: var(--section-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+        }
+
+        .prediction-container h2 {
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            color: var(--heading-color);
+        }
+
+        .prediction-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .search-location {
+            position: relative;
+            flex-grow: 1;
+            min-width: 300px;
+        }
+
+        .search-location input {
+            width: 100%;
+            padding: 15px 60px 15px 20px; /* Make space for the button */
+            border-radius: 30px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: var(--card-bg);
+            font-size: 1em;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .search-location input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .search-location button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            bottom: 5px;
+            width: 45px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--accent-color);
+            color: var(--accent-text);
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+        }
+
+        .search-location button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .date-selector input {
+            padding: 14px 20px;
+            border-radius: 30px;
+            background-color: var(--card-bg);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .download-dropdown-container {
+            position: relative;
+            display: none; /* Hidden by default */
+            margin-top: 30px;
+        }
+
+        .download-dropdown-container.visible {
+            display: inline-flex; /* Use inline-flex to keep it centered */
+        }
+
+        .download-dropdown-container .btn-primary {
+            background-color: #28a745; /* Green color for download */
+            border-radius: 30px; /* Fully rounded */
+        }
+
+        .download-dropdown-container .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        #download-options-menu {
+            display: none;
+            position: absolute;
+            top: 0; /* Align with the top of the button */
+            left: 100%; /* Position to the right of the button */
+            background-color: var(--card-bg);
+            margin-left: 10px; /* Add a small gap */
+            box-shadow: 0 8px 16px var(--card-shadow);
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            min-width: 180px;
+        }
+
+        /* Show menu on hover over the container */
+        .download-dropdown-container:hover #download-options-menu,
+        .download-dropdown-container.touch-active #download-options-menu {
+            display: block;
+        }
+
+        /* Prediction Results Area */
+        .prediction-results {
+            display: none; /* Hidden by default */
+            margin-top: 40px;
+            width: 100%;
+            max-width: 800px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            text-align: left;
+        }
+
+        .prediction-results.visible {
+            display: grid;
+        }
+
+        .result-item {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .result-item h4 {
+            margin: 0 0 5px 0;
+            color: var(--text-primary);
+            font-size: 1.1em;
+        }
+
+        .result-item.rain-prediction .rain-chance {
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        .rain-chance .percentage {
+            font-size: 2.5em;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .rain-chance .verdict {
+            margin: 5px 0 0 0;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-color);
+            border-radius: 20px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .progress-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            align-self: flex-end;
+        }
+
+        #temp-bar { background-color: #ff9800; } /* Orange for temp */
+        #rainfall-bar { background-color: #2196f3; } /* Blue for rainfall */
+        #humidity-bar { background-color: #4caf50; } /* Green for humidity */
+
+        /* Chatbot Section */
+        #chatbot-section {
+            flex-direction: column;
+            justify-content: flex-end; /* Aligns content to the bottom */
+            height: 75vh; /* Take up a good portion of the viewport height */
+            max-height: 700px;
+        }
+
+        .chatbot-container {
+            width: 100%;
+            max-width: 800px;
+            height: 100%;
+            background-color: var(--section-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-history {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-message {
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 75%;
+            line-height: 1.5;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .user-message {
+            background-color: var(--accent-color);
+            color: var(--accent-text);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-message {
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid rgba(0,0,0,0.08);
+            background-color: var(--section-bg);
+        }
+
+        .chat-input-area input {
+            flex-grow: 1;
+            border: none;
+            background: transparent;
+            padding: 10px;
+            font-size: 1em;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .chat-input-area input:focus {
+            outline: none;
+        }
+
+        .chat-input-area button {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 0 10px;
+        }
+
+        /* Current Weather Section */
+        #current-weather-section {
+            flex-direction: column;
+            text-align: center;
+            background-color: var(--section-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+        }
+
+        .current-weather-container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .current-weather-main {
+            margin-bottom: 40px;
+        }
+
+        .current-weather-main h2 {
+            font-size: 2.8em;
+            color: var(--heading-color);
+            margin-bottom: 10px;
+        }
+
+        .current-temp-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .current-temp-display .fas {
+            font-size: 4em;
+            color: #ffc107; /* Sunny yellow */
+        }
+
+        .current-temp-display span {
+            font-size: 5em;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .current-weather-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-box {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px var(--card-shadow);
+            text-align: center;
+        }
+
+        .detail-box h4 {
+            margin: 0 0 15px 0;
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-box h4 .fas {
+            font-size: 1.5em;
+        }
+
+        .detail-box span {
+            font-size: 1.6em;
+            font-weight: 500;
+            color: var(--heading-color);
+        }
+
+        /* About/Contact Section */
+        #about-section {
+            flex-direction: column;
+            text-align: center;
+            background-color: var(--section-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+        }
+
+        .about-header h2 {
+            font-size: 2.8em;
+            color: var(--heading-color);
+            margin-bottom: 10px;
+        }
+
+        .about-header p {
+            font-size: 1.2em;
+            color: var(--text-secondary);
+            margin-bottom: 50px;
+        }
+
+        .contact-info-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .contact-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 40px;
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            box-shadow: 0 5px 20px var(--card-shadow);
+        }
+
+        .contact-card .fas {
+            font-size: 2.5em;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .contact-card h3 {
+            font-size: 1.5em;
+            color: var(--heading-color);
+            margin-bottom: 10px;
+        }
+
+        .contact-card p {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Support Section */
+        #support-section {
+            flex-direction: column;
+            text-align: center;
+            background-color: var(--section-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+        }
+        .support-info-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        /* Help Section / FAQ */
+        #help-section {
+            flex-direction: column;
+            text-align: center;
+            background-color: var(--section-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+            align-items: center;
+        }
+
+        .faq-container {
+            width: 100%;
+            max-width: 800px;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .faq-container h3 {
+            font-size: 1.8em;
+            color: var(--text-primary);
+        }
+
+        .faq-container .faq-subheading {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+
+        .faq-question .fa-chevron-right {
+            transition: transform 0.3s ease;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease;
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: 0 20px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        .faq-item.active .faq-question .fa-chevron-right {
+            transform: rotate(90deg);
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 20px;
+        }
+
+        /* ======================== */
+        /* --- Bottom Mobile Nav --- */
+        /* ======================== */
+        .bottom-nav {
+            display: none; /* Hidden by default */
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--navbar-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1050;
+        }
+
+        .bottom-nav-links {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+            margin: 0;
+            padding: 10px 0;
+        }
+
+        .bottom-nav-links a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.75em;
+            padding: 5px 15px;
+            border-radius: 8px;
+            transition: color 0.3s;
+        }
+
+        .bottom-nav-links li.active a {
+            color: var(--accent-color);
+        }
+
+
+        /* ======================== */
+        /* --- Responsive Media Queries for Mobile --- */
+        /* ======================== */
+
+        @media (max-width: 992px) {
+            /* Hide some links on medium screens and show them in the side menu */
+            .navbar-right li.hide-on-mobile {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* General adjustments for tablets and large phones */
+            .bottom-nav {
+                display: block; /* Show bottom nav on mobile */
+            }
+            main#app-content {
+                padding-bottom: 80px; /* Add padding to prevent content from being hidden by bottom nav */
+            }
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            main#app-content {
+                padding: 20px;
+            }
+
+            /* Hide the main nav links in the top bar on mobile */
+            .navbar-right li:not(:last-child) {
+                display: none;
+            }
+
+            /* Stack hero section items */
+            #hero-section {
+                text-align: center;
+            }
+            .hero-text-container {
+                padding: 0;
+            }
+            .hero-image-gallery {
+                margin-left: 0;
+                max-width: 100%;
+            }
+
+            /* Reduce heading sizes */
+            .hero-text-container h1 {
+                font-size: 2.5em;
+            }
+            .why-choose-header h2, .prediction-container h2, .current-weather-main h2, .about-header h2, .about-header h2 {
+                font-size: 2em;
+            }
+
+            /* Adjust card layouts */
+            .feature-cards, .contact-info-container, .support-info-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .about-content-container {
+                grid-template-columns: 1fr; /* Stack grid items */
+            }
+
+            /* Adjust prediction controls */
+            .prediction-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            /* Adjust current weather display */
+            .current-temp-display span {
+                font-size: 4em;
+            }
+            .current-weather-details {
+                grid-template-columns: 1fr 1fr; /* Two columns for details */
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-left">
+            <i class="fas fa-cloud-sun-rain logo"></i>
+            <span class="app-name">The Crucibles</span>
+        </div>
+        <nav class="navbar-right">
+            <ul>
+                <li class="active" data-nav-item="hero-section"><a href="#" data-section="hero-section"><i class="fas fa-home"></i><span class="nav-item-desktop"> Home</span></a></li>
+                <li class="hide-on-mobile" data-nav-item="why-choose-section"><a href="#" data-section="why-choose-section"><i class="fas fa-star"></i><span class="nav-item-desktop"> Features</span></a></li>
+                <li data-nav-item="predict-weather-section"><a href="#" data-section="predict-weather-section"><i class="fas fa-chart-line"></i><span class="nav-item-desktop"> Predict Weather</span></a></li>
+                <li class="hide-on-mobile" data-nav-item="chatbot-section"><a href="#" data-section="chatbot-section"><i class="fas fa-comment-dots"></i><span class="nav-item-desktop"> Chatbot</span></a></li>
+                <li data-nav-item="current-weather-section"><a href="#" data-section="current-weather-section"><i class="fas fa-map-marker-alt"></i><span class="nav-item-desktop"> Current Weather</span></a></li>
+                <li><a href="#" id="theme-toggle-btn" class="menu-icon"><i class="fas fa-moon"></i></a></li>
+                <li><a href="#" id="menu-icon-btn" class="menu-icon"><i class="fas fa-bars"></i></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <aside class="side-menu">
+        <div class="side-menu-header">
+            <h3>Menu</h3>
+            <i class="fas fa-times close-menu-btn"></i>
+        </div>
+        <div class="side-menu-content">
+            <a href="#" data-section="about-section"><i class="fas fa-info-circle"></i> About</a>
+            <a href="#" data-section="help-section"><i class="fas fa-question-circle"></i> Help</a>
+            <a href="#" data-section="support-section"><i class="fas fa-headset"></i> Support</a>
+        </div>
+    </aside>
+
+    <main id="app-content">
+        <section id="hero-section" class="content-section active">
+            <div class="hero-text-container">
+                <h1>Plan Your Future with Confidence</h1>
+                <p>Our website gives you the best experience to know about future weather so you can make your plans comfortably.</p>
+                <button class="btn-primary" id="start-planning-btn">Start Planning <i class="fas fa-arrow-right"></i></button>
+            </div>
+            <div class="hero-image-gallery">
+                <div class="gallery-inner">
+                    <img src="https://images.unsplash.com/photo-1622396481328-9b1b78cdd9fd?w=500" alt="Sunny Weather">
+                    <img src="https://images.unsplash.com/photo-1501630834273-4b5604d2ee31?w=500" alt="Cloudy Weather">
+                    <img src="https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=500" alt="Rainy Weather">
+                    <img src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=500" alt="Stormy Weather">
+                    <img src="https://images.unsplash.com/photo-1429552077091-836152271555?w=500" alt="Windy Weather">
+                    <img src="https://images.unsplash.com/photo-1488866022504-f2584929ca5f?w=500" alt="Night Sky">
+                </div>
+            </div>
+        </section>
+
+        <section id="why-choose-section" class="content-section">
+            <div class="why-choose-header">
+                <h2>Why Choose The Crucibles?</h2>
+                <p>Advanced weather forecasting powered by cutting-edge technology.</p>
+            </div>
+            <div class="feature-cards">
+                <div class="card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1458/1458201.png" alt="Target Icon">
+                    <h3>Accurate Predictions</h3>
+                    <p>Get precise weather forecasts up to a year in advance for any location worldwide.</p>
+                </div>
+                <div class="card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/8943/8943378.png" alt="Robot Icon">
+                    <h3>AI-Powered Insights</h3>
+                    <p>Chat with our intelligent assistant for personalized weather advice.</p>
+                </div>
+                <div class="card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3652/3652195.png" alt="Real-time Icon">
+                    <h3>Real-Time Updates</h3>
+                    <p>Track current weather conditions at your exact location instantly.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="predict-weather-section" class="content-section">
+            <div class="prediction-container">
+                <h2>Predict Weather for a Future Date</h2>
+                <div class="prediction-controls">
+                    <div class="search-location">
+                        <input type="text" placeholder="Select a location in the world...">
+                        <button id="predict-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                    <div class="date-selector">
+                        <input type="date">
+                    </div>
+                </div>
+                <div class="prediction-results" id="prediction-results-container">
+                    <div class="result-item rain-prediction">
+                        <h4>Rain Prediction</h4>
+                        <div class="rain-chance">
+                            <span class="percentage" id="rain-percentage">--%</span>
+                            <p class="verdict" id="rain-verdict">Enter a location</p>
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <h4>Humidity</h4>
+                        <div class="progress-bar-container"><div class="progress-bar" id="humidity-bar"></div></div>
+                        <span class="progress-label" id="humidity-label">--%</span>
+                    </div>
+                    <div class="result-item">
+                        <h4>Temperature</h4>
+                        <div class="progress-bar-container"><div class="progress-bar" id="temp-bar"></div></div>
+                        <span class="progress-label" id="temp-label">--°C</span>
+                    </div>
+                    <div class="result-item">
+                        <h4>Expected Rainfall</h4>
+                        <div class="progress-bar-container"><div class="progress-bar" id="rainfall-bar"></div></div>
+                        <span class="progress-label" id="rainfall-label">--mm</span>
+                    </div>
+                </div>
+                <div class="download-dropdown-container" id="download-container">
+                    <button class="btn-primary" id="main-download-btn"><i class="fas fa-download"></i> Download</button>
+                    <div id="download-options-menu" class="download-options-menu">
+                        <a href="#" data-type="json">Download as JSON</a>
+                        <a href="#" data-type="csv">Download as CSV</a>
+                        <a href="#" data-type="pdf">Download as PDF</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="chatbot-section" class="content-section">
+            <div class="chatbot-container">
+                <div class="chat-history" id="chat-history">
+                    <!-- Chat messages will appear here -->
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Ask any of your weather queries...">
+                    <button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <section id="current-weather-section" class="content-section">
+            <div class="current-weather-container">
+                <div class="current-weather-main">
+                    <h2 id="current-location">Your Location</h2>
+                    <div class="current-temp-display">
+                        <i class="fas fa-sun" id="current-weather-icon"></i>
+                        <span id="current-main-temp">--°C</span>
+                    </div>
+                </div>
+                <div class="current-weather-details">
+                    <div class="detail-box">
+                        <h4><i class="fas fa-tint"></i> Humidity</h4>
+                        <span id="current-humidity">--%</span>
+                    </div>
+                    <div class="detail-box">
+                        <h4><i class="fas fa-wind"></i> Wind Speed</h4>
+                        <span id="current-wind">-- km/h</span>
+                    </div>
+                    <div class="detail-box">
+                        <h4><i class="fas fa-compress-arrows-alt"></i> Pressure</h4>
+                        <span id="current-pressure">-- hPa</span>
+                    </div>
+                    <div class="detail-box">
+                        <h4><i class="fas fa-eye"></i> Visibility</h4>
+                        <span id="current-visibility">-- km</span>
+                    </div>
+                    <div class="detail-box">
+                        <h4><i class="fas fa-cloud-sun"></i> Condition</h4>
+                        <span id="current-condition">--</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about-section" class="content-section">
+            <div class="about-header">
+                <h2>About Us</h2>
+                <p>Learn more about The Crucibles team.</p>
+            </div>
+            <div class="about-content-container">
+                <div class="contact-card mission-card">
+                    <h3>Our Mission</h3>
+                    <p>The Crucibles is dedicated to providing the most accurate and reliable weather forecasting service to help people plan their lives with confidence.</p>
+                    <p>Our advanced prediction algorithms and AI-powered insights enable users to access detailed weather forecasts up to one year in advance for any location worldwide.</p>
+                    <p>We believe that better weather information leads to better decisions, whether you're planning a vacation, organizing an outdoor event, or simply deciding what to wear tomorrow.</p>
+                </div>
+                <div class="values-container">
+                    <div class="contact-card">
+                        <h3>Accuracy</h3>
+                        <p>We use cutting-edge meteorological models to deliver the most precise forecasts.</p>
+                    </div>
+                    <div class="contact-card">
+                        <h3>Innovation</h3>
+                        <p>AI-powered predictions and real-time data analysis for superior insights.</p>
+                    </div>
+                    <div class="contact-card">
+                        <h3>Reliability</h3>
+                        <p>24/7 availability with consistent updates and dependable service.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="support-section" class="content-section">
+            <div class="about-header">
+                <h2>Contact Us</h2>
+                <p>Contact our team for support.</p>
+            </div>
+            <div class="support-info-container">
+                <div class="contact-card">
+                    <i class="fas fa-phone-alt"></i>
+                    <h3>Contact Us</h3>
+                    <p>+91 12345 67890</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Email Address</h3>
+                    <p>support@thecrucibles.dev</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Address</h3>
+                    <p>456 Support Lane, Help Center, Mumbai, India</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="help-section" class="content-section">
+            <div class="about-header">
+                <h2>Help Center</h2>
+                <p>Find answers to common questions.</p>
+            </div>
+            <div class="faq-container">
+                <h3>Frequently Asked Questions</h3>
+                <p class="faq-subheading">Everything you need to know about using The Crucibles.</p>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How accurate are the predictions?</span><i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="faq-answer"><p>Our predictions use advanced meteorological models and AI algorithms to provide highly accurate forecasts. Accuracy varies based on the time range, with short-term forecasts being more precise than long-term predictions.</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I check weather for any city in the world?</span><i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="faq-answer"><p>Yes! Our Weather Planner supports predictions for cities worldwide. Simply enter the city name and select your desired date.</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How far in advance can I predict weather?</span><i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="faq-answer"><p>You can access weather predictions up to one year in advance from the current date, allowing you to plan long-term events and trips with confidence.</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What does the AI chatbot do?</span><i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="faq-answer"><p>Our AI chatbot provides personalized weather insights, answers questions about weather patterns, and offers recommendations based on your queries.</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How does current weather tracking work?</span><i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="faq-answer"><p>The current weather feature uses your device's location services to detect your position and display real-time weather conditions for your exact location.</p></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="bottom-nav">
+        <ul class="bottom-nav-links">
+            <li class="active" data-nav-item="hero-section">
+                <a href="#" data-section="hero-section"><i class="fas fa-home fa-lg"></i><span>Home</span></a>
+            </li>
+            <li data-nav-item="predict-weather-section">
+                <a href="#" data-section="predict-weather-section"><i class="fas fa-chart-line fa-lg"></i><span>Predict</span></a>
+            </li>
+            <li data-nav-item="current-weather-section">
+                <a href="#" data-section="current-weather-section"><i class="fas fa-map-marker-alt fa-lg"></i><span>Current</span></a>
+            </li>
+        </ul>
+    </nav>
+
+    <script>
+       document.addEventListener('DOMContentLoaded', () => {
+  const navLinks = document.querySelectorAll('.navbar-right li a[data-section]');
+  const contentSections = document.querySelectorAll('.content-section');
+  const sideMenuLinks = document.querySelectorAll('.side-menu-content a[data-section]');
+
+  // ====== Section Navigation ======
+  function showSection(sectionId) {
+    contentSections.forEach(section => section.classList.remove('active'));
+    if (sectionId === 'current-weather-section') {
+      updateCurrentWeather({
+        location: "Your Location",
+        temp: 25,
+        icon: "fa-sun",
+        humidity: 60,
+        wind: 15,
+        pressure: 1012,
+        visibility: 10,
+        condition: "Sunny"
+      });
+    }
+    const activeSection = document.getElementById(sectionId);
+    if (activeSection) activeSection.classList.add('active');
+  }
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const sectionToShow = link.getAttribute('data-section');
+      if (sectionToShow) {
+        navLinks.forEach(nav => nav.parentElement.classList.remove('active'));
+        link.parentElement.classList.add('active');
+        showSection(sectionToShow);
+      }
+    });
+  });
+
+  sideMenuLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const sectionToShow = link.getAttribute('data-section');
+      const mainNavLink = document.querySelector(`.navbar-right a[data-section="${sectionToShow}"]`);
+      if (mainNavLink) mainNavLink.click(); else showSection(sectionToShow);
+      closeMenu();
+    });
+  });
+
+  showSection('hero-section');
+
+  // ====== Side Menu ======
+  const menuIconBtn = document.getElementById('menu-icon-btn');
+  const sideMenu = document.querySelector('.side-menu');
+  const closeMenuBtn = document.querySelector('.close-menu-btn');
+  const mainContent = document.getElementById('app-content');
+
+  const toggleMenu = e => {
+    e.preventDefault();
+    sideMenu.classList.toggle('active');
+  };
+  const closeMenu = () => sideMenu.classList.remove('active');
+
+  menuIconBtn.addEventListener('click', toggleMenu);
+  closeMenuBtn.addEventListener('click', toggleMenu);
+  mainContent.addEventListener('click', closeMenu);
+
+  // ====== "Start Planning" button ======
+  const startPlanningBtn = document.getElementById('start-planning-btn');
+  if (startPlanningBtn) {
+    startPlanningBtn.addEventListener('click', () => {
+      const predictWeatherLink = document.querySelector('a[data-section="predict-weather-section"]');
+      if (predictWeatherLink) predictWeatherLink.click();
+    });
+  }
+
+  // ====== Prediction Logic ======
+  const predictBtn = document.getElementById('predict-btn');
+  const resultsContainer = document.getElementById('prediction-results-container');
+  const downloadContainer = document.getElementById('download-container');
+
+  predictBtn.addEventListener('click', async () => {
+    const cityInput = document.querySelector('.search-location input').value.trim();
+    const dateInput = document.querySelector('.date-selector input').value.trim();
+
+    if (!cityInput || !dateInput) {
+      alert("Please enter both city and date!");
+      return;
+    }
+
+    downloadContainer.classList.remove('visible'); // Hide on new prediction
+    resultsContainer.classList.add('visible');
+    document.getElementById('rain-verdict').textContent = "Loading...";
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ city: cityInput, date: dateInput })
+      });
+      const data = await response.json();
+
+      if (data.error) {
+        document.getElementById('rain-verdict').textContent = "Error: " + data.error;
+        resultsContainer.classList.remove('visible');
+        return;
+      }
+
+      const rainText = data.rain_chance || "Unknown";
+      const temp = data.temperature || 0;
+      const humidity = data.humidity || 0;
+      const rainfall = data.rainfall || 0;
+
+      document.getElementById('rain-percentage').textContent =
+        rainText.includes("Yes") ? "80%" : "20%";
+      document.getElementById('rain-verdict').textContent = rainText;
+
+      document.getElementById('humidity-bar').style.width = `${humidity}%`;
+      document.getElementById('humidity-label').textContent = `${humidity}%`;
+
+      const tempPercentage = (temp / 50) * 100;
+      document.getElementById('temp-bar').style.width = `${tempPercentage}%`;
+      document.getElementById('temp-label').textContent = `${temp}°C`;
+
+      const rainfallPercentage = (rainfall / 50) * 100;
+      document.getElementById('rainfall-bar').style.width = `${rainfallPercentage}%`;
+      document.getElementById('rainfall-label').textContent = `${rainfall}mm`;
+
+      // Show download button on successful prediction
+      downloadContainer.classList.add('visible');
+
+    } catch (err) {
+      document.getElementById('rain-verdict').textContent = "Server Error: " + err.message;
+      resultsContainer.classList.remove('visible');
+    }
+  });
+
+  function downloadPrediction(fileType) {
+      // Gather data from the UI
+      const predictionData = {
+          location: document.querySelector('.search-location input').value || 'Not Specified',
+          date: document.querySelector('.date-selector input').value || 'Not Specified',
+          rain_chance: document.getElementById('rain-percentage').textContent,
+          rain_verdict: document.getElementById('rain-verdict').textContent,
+          humidity: document.getElementById('humidity-label').textContent,
+          temperature: document.getElementById('temp-label').textContent,
+          expected_rainfall: document.getElementById('rainfall-label').textContent,
+          generated_on: new Date().toLocaleString()
+      };
+
+      let fileContent = '';
+      let mimeType = 'text/plain';
+      let fileName = `prediction.${fileType}`;
+
+      if (fileType === 'json') {
+          fileContent = JSON.stringify(predictionData, null, 2);
+          mimeType = 'application/json';
+      } else if (fileType === 'csv') {
+          const headers = Object.keys(predictionData).join(',');
+          const values = Object.values(predictionData).map(val => `"${val.replace(/"/g, '""')}"`).join(',');
+          fileContent = `${headers}\n${values}`;
+          mimeType = 'text/csv';
+      } else if (fileType === 'pdf') {
+          // PDF generation using jsPDF
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+
+          doc.setFontSize(18);
+          doc.text("Weather Prediction Report", 14, 22);
+          doc.setFontSize(11);
+          doc.setTextColor(100);
+
+          let y = 40;
+          for (const [key, value] of Object.entries(predictionData)) {
+              const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+              doc.text(`${formattedKey}: ${value}`, 14, y);
+              y += 10;
+          }
+
+          doc.save(fileName);
+          return;
+      }
+
+      if (fileContent) {
+          // Create a blob and trigger download
+          const blob = new Blob([fileContent], { type: mimeType });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a); // Required for Firefox
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+      }
+  }
+
+  // --- Download Dropdown Logic ---
+  const mainDownloadBtn = document.getElementById('main-download-btn');
+  const optionsMenu = document.getElementById('download-options-menu');
+  let hideMenuTimer;
+
+  // Show menu on hover
+  downloadContainer.addEventListener('mouseenter', () => {
+      clearTimeout(hideMenuTimer); // Cancel any pending hide action
+      downloadContainer.classList.add('touch-active'); // Use the same class to show the menu
+  });
+
+  // Start a timer to hide the menu on mouse leave
+  downloadContainer.addEventListener('mouseleave', () => {
+      hideMenuTimer = setTimeout(() => {
+          downloadContainer.classList.remove('touch-active');
+      }, 2000); // Keep menu open for 2 seconds
+  });
+
+  // Toggle menu on button click for touch devices, and allow re-clicking to close
+  downloadContainer.addEventListener('click', (e) => {
+      // Only toggle if the click is on the container/button, not the menu items
+      if (e.target === downloadContainer || e.target === mainDownloadBtn || mainDownloadBtn.contains(e.target)) {
+          clearTimeout(hideMenuTimer); // A click should be intentional, so stop any hide timer
+          e.stopPropagation(); // Prevent the window listener from closing it immediately
+          downloadContainer.classList.toggle('touch-active');
+      }
+  });
+
+  optionsMenu.addEventListener('click', (e) => {
+      if (e.target.tagName === 'A') {
+          e.preventDefault();
+          e.stopPropagation(); // Prevent this click from bubbling to the container
+          const fileType = e.target.getAttribute('data-type');
+          downloadPrediction(fileType);
+          clearTimeout(hideMenuTimer); // Stop any hide timer
+          // Explicitly close the menu
+          downloadContainer.classList.remove('touch-active');
+      }
+  });
+
+  // Hide menu if clicking elsewhere
+  window.addEventListener('click', () => {
+      clearTimeout(hideMenuTimer); // A click elsewhere should close it immediately
+      if (downloadContainer.classList.contains('touch-active')) {
+          downloadContainer.classList.remove('touch-active');
+      }
+  });
+
+
+  // ====== Chatbot Logic ======
+  const chatHistory = document.getElementById('chat-history');
+  const chatInput = document.getElementById('chat-input');
+  const chatSendBtn = document.getElementById('chat-send-btn');
+
+  async function sendMessage() {
+    const userMessage = chatInput.value.trim();
+    if (!userMessage) return;
+
+    addMessageToChat(userMessage, 'user-message');
+    chatInput.value = "";
+
+    try {
+      const res = await fetch("http://127.0.0.1:5000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMessage }),
+      });
+      const data = await res.json();
+      addMessageToChat(data.reply || "No response", 'ai-message');
+    } catch (err) {
+      addMessageToChat("⚠️ Error connecting to chatbot.", 'ai-message');
+    }
+  }
+
+  function addMessageToChat(text, type) {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("chat-message", type);
+    messageDiv.textContent = text;
+    chatHistory.appendChild(messageDiv);
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+  }
+
+  chatSendBtn.addEventListener("click", sendMessage);
+  chatInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  // ====== Current Weather Mock ======
+  function updateCurrentWeather(data) {
+    document.getElementById('current-location').textContent = data.location;
+    document.getElementById('current-main-temp').textContent = `${data.temp}°C`;
+    document.getElementById('current-humidity').textContent = `${data.humidity}%`;
+    document.getElementById('current-wind').textContent = `${data.wind} km/h`;
+    document.getElementById('current-pressure').textContent = `${data.pressure} hPa`;
+    document.getElementById('current-visibility').textContent = `${data.visibility} km`;
+    document.getElementById('current-condition').textContent = data.condition;
+    document.getElementById('current-weather-icon').className = `fas ${data.icon}`;
+  }
+});
+    </script>
+</body>
+</html>
