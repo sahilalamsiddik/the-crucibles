@@ -8,6 +8,7 @@ import pandas as pd
 app = Flask(__name__)
 app.secret_key = "your-secret-key"  
 #wow key wow wow wow wow 
+#wow
 CORS(app)
 
 os.environ["GENAI_API_KEY"] = "AIzaSyCQx08C1YOYiw7Q8AaBxChwmIng02LSi4Q"
