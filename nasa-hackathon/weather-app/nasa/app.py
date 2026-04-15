@@ -6,7 +6,8 @@ from weather_predictor import load_and_preprocess_data, train_model, forecast_fo
 import pandas as pd
 
 app = Flask(__name__)
-app.secret_key = "your-secret-key"
+app.secret_key = "your-secret-key"  
+#set the key
 CORS(app)
 
 os.environ["GENAI_API_KEY"] = "AIzaSyCQx08C1YOYiw7Q8AaBxChwmIng02LSi4Q"
